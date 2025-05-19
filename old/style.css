@@ -1,0 +1,73 @@
+/* CSS Переменные для легкой настройки */
+:root {
+    --text-color: white;
+    --shadow-color: black;
+    --shadow-blur: 5px;
+    --font-size: 2.5em; /* Немного увеличим для наглядности */
+}
+
+* { /* Базовый сброс стилей */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Указываем основной шрифт */
+    background: url(background.jpg) no-repeat center center fixed;
+    background-size: cover; /* Современный синтаксис, префиксы не нужны */
+    overflow: hidden; /* Чтобы снежинки не создавали скроллбар */
+    height: 100vh; /* Занимаем всю высоту вьюпорта */
+    display: flex; /* Используем flex для центрирования контента */
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.content {
+    text-align: center;
+    z-index: 10; /* Контент поверх снежинок */
+    position: relative; /* Чтобы z-index сработал */
+}
+
+.stroke {
+    font-size: var(--font-size);
+    text-shadow:
+        var(--shadow-color) 0 0 var(--shadow-blur),
+        var(--shadow-color) 0 0 var(--shadow-blur),
+        var(--shadow-color) 0 0 var(--shadow-blur); /* Тень можно наложить несколько раз для плотности */
+    /* margin auto не нужен при flex центрировании */
+}
+
+#snowflakes-container {
+    position: fixed; /* Или absolute, чтобы не влиять на поток */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Чтобы снежинки не мешали взаимодействию с контентом */
+    z-index: 1; /* Ниже контента */
+}
+
+.snowflake {
+    position: absolute;
+    width: 15px; /* Задаем размер снежинки */
+    height: 15px;
+    background-image: url('snow1.png'); /* Указываем картинку снежинки */
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* top и left будут управляться через JS (transform для лучшей производительности) */
+    will-change: transform; /* Оптимизация для анимации */
+    opacity: 0.8; /* Немного прозрачности */
+}
+
+/* Медиа-запрос для маленьких экранов */
+@media (max-width: 600px) {
+    :root {
+        --font-size: 1.8em;
+    }
+    .snowflake {
+        width: 10px;
+        height: 10px;
+    }
+}
