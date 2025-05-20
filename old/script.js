@@ -11,8 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let modernSnowAnimationId = null;
     let modernCountdownIntervalId = null;
 
-    const styleToggle = document.createElement('div');
+    const styleToggle = document.createElement('img');
     styleToggle.id = 'style-toggle';
+    styleToggle.src = 'favicon.ico';
+    styleToggle.alt = 'Переключить версию';
     document.body.appendChild(styleToggle);
 
     const hoverArea = document.getElementById('toggle-hover-area');
@@ -83,11 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function createModernSnowflake(index) {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
-        const SNOWFLAKE_SIZE_MIN = 8;
-        const SNOWFLAKE_SIZE_MAX = 20;
-        const size = Math.random() * (SNOWFLAKE_SIZE_MAX - SNOWFLAKE_SIZE_MIN) + SNOWFLAKE_SIZE_MIN;
-        snowflake.style.width = `${size}px`;
-        snowflake.style.height = `${size}px`;
+        const SNOWFLAKE_SIZE_MIN_VMIN = 0.8;
+        const SNOWFLAKE_SIZE_MAX_VMIN = 2.3;
+        
+        const size = Math.random() * (SNOWFLAKE_SIZE_MAX_VMIN - SNOWFLAKE_SIZE_MIN_VMIN) + SNOWFLAKE_SIZE_MIN_VMIN;
+        
+        snowflake.style.width = `${size}vmin`;
+        snowflake.style.height = `${size}vmin`;
         snowflake.style.opacity = String(Math.random() * 0.5 + 0.3);
         snowflake.style.zIndex = String(index);
 
@@ -123,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function calculateModernSnowflakeCount() {
-        return Math.min(200, Math.max(30, Math.round(window.innerWidth / 15)));
+        return Math.min(500, Math.max(50, Math.round(window.innerWidth / 10)));
     }
 
     function initModernSnowflakes() {

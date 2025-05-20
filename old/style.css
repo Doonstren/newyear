@@ -2,7 +2,7 @@
     --text-color: white;
     --shadow-color: black;
     --shadow-blur: 5px;
-    --font-size: 4.63vmin;
+    --font-size: 4.2vmin;
     --snowflake-size: 15px;
 }
 
@@ -64,7 +64,7 @@ h1#countdown {
     position: absolute;
     width: var(--snowflake-size);
     height: var(--snowflake-size);
-    background: url('snow1.png') no-repeat center/contain;
+    background: url('snow.png') no-repeat center/contain;
     will-change: transform;
     opacity: 0.8;
 }
@@ -101,15 +101,10 @@ h1#countdown {
     right: 20px;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: transparent;
     cursor: pointer;
-    font-size: 20px;
     opacity: 0;
-    transition: opacity 0.3s, background-color 0.3s;
+    transition: opacity 0.3s;
     z-index: 1000;
     user-select: none;
 }

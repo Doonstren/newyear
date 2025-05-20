@@ -11,7 +11,7 @@ let legacySnowGlobals = {
     deltax: [],
     obj: [],
     col: 0,
-    imgsrc1: "snow1.png",
+    imgsrc1: "snow-old.png",
     initialized: false
 };
 
@@ -34,7 +34,7 @@ function initLegacySnow() {
     const width = window.innerWidth;
 
     legacySnowGlobals.col = Math.round(height / 8);
-    
+
     legacySnowGlobals.amp = new Array(legacySnowGlobals.col);
     legacySnowGlobals.x_pos = new Array(legacySnowGlobals.col);
     legacySnowGlobals.y_pos = new Array(legacySnowGlobals.col);
