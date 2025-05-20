@@ -1,139 +1,246 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Элементы DOM ---
+    const modernContainer = document.getElementById('modern-version-container');
+    const legacyContainer = document.getElementById('legacy-version-container');
+    const mainStylesheet = document.getElementById('main-stylesheet');
+
     const countdownElement = document.getElementById('countdown');
     const snowflakesContainer = document.getElementById('snowflakes-container');
 
-    // --- Настройки ---
-    const SNOWFLAKE_IMAGE_SRC = 'snow1.png'; // Путь к изображению снежинки
-    const NUM_SNOWFLAKES = calculateSnowflakeCount(); // Количество снежинок (зависит от ширины экрана)
-    const MIN_SPEED_Y = 1;      // Минимальная вертикальная скорость
-    const MAX_SPEED_Y = 2;      // Максимальная вертикальная скорость
-    const MIN_AMPLITUDE = 5;    // Минимальная амплитуда горизонтального колебания
-    const MAX_AMPLITUDE = 20;   // Максимальная амплитуда
-    const MIN_FREQ = 0.01;      // Минимальная частота колебания
-    const MAX_FREQ = 0.05;      // Максимальная частота
-    const SNOWFLAKE_SIZE_MIN = 8; // Минимальный размер снежинки (px)
-    const SNOWFLAKE_SIZE_MAX = 20; // Максимальный размер снежинки (px)
+    let isModernVersion = true;
+    let modernSnowflakes = [];
+    let modernSnowAnimationId = null;
+    let modernCountdownIntervalId = null;
 
-    let snowflakes = [];
-    let viewportWidth = window.innerWidth;
-    let viewportHeight = window.innerHeight;
+    const styleToggle = document.createElement('div');
+    styleToggle.id = 'style-toggle';
+    document.body.appendChild(styleToggle);
 
-    // --- Логика обратного отсчета ---
-    function updateCountdown() {
+    const hoverArea = document.getElementById('toggle-hover-area');
+    let toggleHideTimeout;
+    let isToggleClicked = false;
+
+    function showToggle() {
+        clearTimeout(toggleHideTimeout);
+        styleToggle.style.opacity = '1';
+    }
+
+    function hideToggle() {
+        if (isToggleClicked) return;
+        toggleHideTimeout = setTimeout(() => {
+            styleToggle.style.opacity = '0';
+        }, 300);
+    }
+
+    hoverArea.addEventListener('mouseenter', showToggle);
+    styleToggle.addEventListener('mouseenter', showToggle);
+    hoverArea.addEventListener('mouseleave', hideToggle);
+    styleToggle.addEventListener('mouseleave', hideToggle);
+
+    styleToggle.addEventListener('click', () => {
+        isToggleClicked = true;
+        toggleVersion();
+        setTimeout(() => {
+            isToggleClicked = false;
+            if (!hoverArea.matches(':hover') && !styleToggle.matches(':hover')) {
+                hideToggle();
+            }
+        }, 500);
+    });
+
+    function getDeclension(number, words) {
+        const cases = [2, 0, 1, 1, 1, 2];
+        return words[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[Math.min(number % 10, 5)]];
+    }
+
+    function updateModernCountdown() {
+        if (!countdownElement) return;
         const now = new Date();
         const currentYear = now.getFullYear();
-        // Определяем дату следующего Нового Года
         let nextYearDate = new Date(currentYear + 1, 0, 1, 0, 0, 0);
 
-        // Если уже наступил НГ текущего года, но еще не 2 января
-        // (чтобы 1 января показывало "С Новым Годом!")
-        if (now.getMonth() === 0 && now.getDate() === 1) {
+        if ((now.getMonth() === 0 && now.getDate() === 1) || nextYearDate.getTime() - now.getTime() <= 0) {
            countdownElement.textContent = `С Новым ${currentYear} Годом! 🎉`;
-           return; // Останавливаем обновление каждую секунду, если уже НГ
+           if (nextYearDate.getTime() - now.getTime() <= 0 && !(now.getMonth() === 0 && now.getDate() === 1)){
+             countdownElement.textContent = `С Наступающим/Наступившим Новым ${currentYear + 1} Годом! 🎉`;
+           }
+           return;
         }
 
-        // Если сейчас декабрь, а следующий НГ еще не наступил
-        // (или любой другой месяц)
         const timeRemaining = nextYearDate.getTime() - now.getTime();
-
-        if (timeRemaining <= 0) {
-             // Это может случиться 1 января до первого обновления
-             countdownElement.textContent = `С Новым ${currentYear} Годом! 🎉`;
-             return;
-        }
-
-
         const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
         const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-        countdownElement.textContent = `До Нового ${currentYear + 1} года осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
+        const daysText = getDeclension(days, ['день', 'дня', 'дней']);
+        const hoursText = getDeclension(hours, ['час', 'часа', 'часов']);
+        const minutesText = getDeclension(minutes, ['минута', 'минуты', 'минут']);
+        const secondsText = getDeclension(seconds, ['секунда', 'секунды', 'секунд']);
+
+        countdownElement.innerHTML = `До Нового ${currentYear + 1} года осталось: <br>${days} ${daysText} ${hours} ${hoursText} ${minutes} ${minutesText} ${seconds} ${secondsText}`;
     }
 
-    // --- Логика снежинок ---
-    function createSnowflake(index) {
-        const snowflake = document.createElement('div'); // Используем div вместо img для гибкости
+    function createModernSnowflake(index) {
+        const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
-        // snowflake.style.backgroundImage = `url(${SNOWFLAKE_IMAGE_SRC})`; // Можно задать и здесь, но лучше в CSS
-
+        const SNOWFLAKE_SIZE_MIN = 8;
+        const SNOWFLAKE_SIZE_MAX = 20;
         const size = Math.random() * (SNOWFLAKE_SIZE_MAX - SNOWFLAKE_SIZE_MIN) + SNOWFLAKE_SIZE_MIN;
         snowflake.style.width = `${size}px`;
         snowflake.style.height = `${size}px`;
-        snowflake.style.opacity = Math.random() * 0.5 + 0.3; // Разная прозрачность
-        snowflake.style.zIndex = index; // Для разной глубины (хотя не сильно заметно)
+        snowflake.style.opacity = String(Math.random() * 0.5 + 0.3);
+        snowflake.style.zIndex = String(index);
 
         snowflakesContainer.appendChild(snowflake);
 
         return {
             element: snowflake,
-            x: Math.random() * viewportWidth,
-            y: Math.random() * viewportHeight - viewportHeight, // Начать сверху, за экраном
-            speedY: Math.random() * (MAX_SPEED_Y - MIN_SPEED_Y) + MIN_SPEED_Y,
-            amplitude: Math.random() * (MAX_AMPLITUDE - MIN_AMPLITUDE) + MIN_AMPLITUDE,
-            frequency: Math.random() * (MAX_FREQ - MIN_FREQ) + MIN_FREQ,
-            deltaX: Math.random() * Math.PI * 2 // Начальная фаза для синуса
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight - window.innerHeight,
+            speedY: Math.random() * (2 - 1) + 1,
+            amplitude: Math.random() * (20 - 5) + 5,
+            frequency: Math.random() * (0.05 - 0.01) + 0.01,
+            deltaX: Math.random() * Math.PI * 2
         };
     }
 
-    function animateSnowflakes() {
-        for (let i = 0; i < snowflakes.length; i++) {
-            const flake = snowflakes[i];
+    function animateModernSnowflakes() {
+        if (!isModernVersion) return;
 
-            // Обновляем позицию
+        for (let i = 0; i < modernSnowflakes.length; i++) {
+            const flake = modernSnowflakes[i];
             flake.y += flake.speedY;
             flake.deltaX += flake.frequency;
             const currentX = flake.x + flake.amplitude * Math.sin(flake.deltaX);
 
-            // Если снежинка ушла за нижний край
-            if (flake.y > viewportHeight) {
-                flake.x = Math.random() * viewportWidth;
-                flake.y = -SNOWFLAKE_SIZE_MAX; // Сбросить чуть выше верха экрана
+            if (flake.y > window.innerHeight) {
+                flake.x = Math.random() * window.innerWidth;
+                flake.y = -20;
             }
-
-            // Применяем трансформацию (производительнее, чем top/left)
             flake.element.style.transform = `translate(${currentX}px, ${flake.y}px)`;
         }
-
-        // Запрашиваем следующий кадр анимации
-        requestAnimationFrame(animateSnowflakes);
+        modernSnowAnimationId = requestAnimationFrame(animateModernSnowflakes);
     }
 
-    function calculateSnowflakeCount() {
-        // Пример: 1 снежинка на каждые 15px ширины, но не более 200
+    function calculateModernSnowflakeCount() {
         return Math.min(200, Math.max(30, Math.round(window.innerWidth / 15)));
     }
 
-    function initSnowflakes() {
-         // Очистить старые снежинки, если они есть (при ресайзе)
-         snowflakesContainer.innerHTML = '';
-         snowflakes = [];
-         const count = calculateSnowflakeCount();
-         for (let i = 0; i < count; i++) {
-            snowflakes.push(createSnowflake(i));
+    function initModernSnowflakes() {
+        snowflakesContainer.innerHTML = '';
+        modernSnowflakes = [];
+        const count = calculateModernSnowflakeCount();
+        for (let i = 0; i < count; i++) {
+            modernSnowflakes.push(createModernSnowflake(i));
         }
     }
 
-    function handleResize() {
-        viewportWidth = window.innerWidth;
-        viewportHeight = window.innerHeight;
-        // Пересоздаем снежинки при ресайзе, чтобы адаптировать количество и начальные позиции
-        initSnowflakes();
+    function startModernVersion() {
+        modernContainer.style.display = 'flex';
+        snowflakesContainer.style.display = 'block';
+        mainStylesheet.href = 'style.css';
+
+        updateModernCountdown();
+        modernCountdownIntervalId = setInterval(updateModernCountdown, 1000);
+
+        initModernSnowflakes();
+        if (modernSnowAnimationId) cancelAnimationFrame(modernSnowAnimationId);
+        animateModernSnowflakes();
     }
 
-    // --- Инициализация ---
-    updateCountdown(); // Первый запуск для отображения сразу
-    setInterval(updateCountdown, 1000); // Обновлять каждую секунду
+    function stopModernVersion() {
+        modernContainer.style.display = 'none';
+        snowflakesContainer.style.display = 'none';
+        if (modernCountdownIntervalId) clearInterval(modernCountdownIntervalId);
+        if (modernSnowAnimationId) cancelAnimationFrame(modernSnowAnimationId);
+        modernSnowAnimationId = null;
+    }
 
-    initSnowflakes(); // Создаем снежинки
-    animateSnowflakes(); // Запускаем анимацию
 
-    // Слушатель на изменение размера окна
+    let legacyScriptLoaded = false;
+
+    function ensureLegacyScript(callback) {
+        if (legacyScriptLoaded && typeof window.startLegacyVersion === 'function') {
+            callback();
+            return;
+        }
+        const scriptTag = document.createElement('script');
+        scriptTag.src = 'old_script.js';
+        scriptTag.onload = () => {
+            legacyScriptLoaded = true;
+            callback();
+        };
+        scriptTag.onerror = () => {
+            console.error("Failed to load old_script.js");
+        };
+        document.body.appendChild(scriptTag);
+    }
+
+    function startLegacyVersionProxy() {
+        legacyContainer.style.display = 'block';
+        modernContainer.style.display = 'none';
+        
+        if (!document.getElementById('legacy-stylesheet')) {
+            const legacyStyle = document.createElement('link');
+            legacyStyle.id = 'legacy-stylesheet';
+            legacyStyle.rel = 'stylesheet';
+            legacyStyle.href = 'old_style.css';
+            document.head.appendChild(legacyStyle);
+        }
+
+        ensureLegacyScript(() => {
+            if (typeof window.startLegacyVersion === 'function') {
+                setTimeout(() => {
+                    window.startLegacyVersion();
+                }, 50);
+            }
+        });
+    }
+
+    function stopLegacyVersionProxy() {
+        legacyContainer.style.display = 'none';
+        if (legacyScriptLoaded && typeof window.stopLegacyVersion === 'function') {
+            window.stopLegacyVersion();
+        }
+        
+        const legacyStyle = document.getElementById('legacy-stylesheet');
+        if (legacyStyle) {
+            legacyStyle.remove();
+        }
+
+        const legacySnowflakes = document.querySelectorAll('[id^="sn_legacy_"]');
+        legacySnowflakes.forEach(flake => {
+            if (flake.parentNode) {
+                flake.parentNode.removeChild(flake);
+            }
+        });
+    }
+
+    function toggleVersion() {
+        isModernVersion = !isModernVersion;
+        if (isModernVersion) {
+            stopLegacyVersionProxy();
+            startModernVersion();
+        } else {
+            stopModernVersion();
+            startLegacyVersionProxy();
+        }
+    }
+
     let resizeTimeout;
     window.addEventListener('resize', () => {
-        // Дебаунс: ждем окончания ресайза перед перерисовкой
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(handleResize, 250);
+        resizeTimeout = setTimeout(() => {
+            if (isModernVersion) {
+                initModernSnowflakes();
+            } else {
+                if (legacyScriptLoaded && typeof window.updateLegacyVersionOnResize === 'function') {
+                    window.updateLegacyVersionOnResize();
+                }
+            }
+        }, 250);
     });
+
+    startModernVersion();
+
 });
