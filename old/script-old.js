@@ -1,4 +1,4 @@
-/* Оригинальная версия от 5 января 2019 г., 2:12:11 */
+/* Оригинальная версия от 5 января 2019 г., 2:12:11 с фиксами*/
 
 let legacySnowIntervalId = null;
 let legacySnowObjects = [];
@@ -116,13 +116,27 @@ function updateLegacyCountdownText() {
     var now = new Date();
     var ny = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0);
     var text = '';
+    var daysLeft = Math.floor((ny.getTime() - now.getTime()) / 86400000);
 
-    if (Math.floor((ny.getTime() - now.getTime()) / 86400000) < 364) {
+    if (daysLeft < 364) {
         if (now.getMonth() === 0 && now.getDate() === 1) {
              text = 'С Новым ' + now.getFullYear() + ' Годом!';
-        } else if (Math.floor((ny.getTime() - now.getTime()) / 86400000) != 0) {
+        } else if (daysLeft != 0) {
             text = 'Текущий год ' + now.getFullYear();
-            text += '. До ' + ny.getFullYear() + ' осталось ' + Math.floor((ny.getTime() - now.getTime()) / 86400000) + ' дней.';
+            
+            var daysString;
+            var n = Math.abs(daysLeft);
+            var mod10 = n % 10;
+            var mod100 = n % 100;
+
+            if (mod10 === 1 && mod100 !== 11) {
+                daysString = "день";
+            } else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
+                daysString = "дня";
+            } else {
+                daysString = "дней";
+            }
+            text += '. До ' + ny.getFullYear() + ' осталось ' + daysLeft + ' ' + daysString + '.';
         } else {
             text = 'Текущий год ' + now.getFullYear();
             text += '. До ' + ny.getFullYear() + ' осталось меньше 1 дня!';

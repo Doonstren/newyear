@@ -169,13 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const scriptTag = document.createElement('script');
-        scriptTag.src = 'old_script.js';
+        scriptTag.src = 'script-old.js';
         scriptTag.onload = () => {
             legacyScriptLoaded = true;
             callback();
         };
         scriptTag.onerror = () => {
-            console.error("Failed to load old_script.js");
+            console.error("Failed to load script-old.js");
         };
         document.body.appendChild(scriptTag);
     }
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const legacyStyle = document.createElement('link');
             legacyStyle.id = 'legacy-stylesheet';
             legacyStyle.rel = 'stylesheet';
-            legacyStyle.href = 'old_style.css';
+            legacyStyle.href = 'style-old.css';
             document.head.appendChild(legacyStyle);
         }
 
