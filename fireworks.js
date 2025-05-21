@@ -239,10 +239,6 @@ function ExplosionParticle() {
         spark.limit = getRandomIntInRange(sparkConfig.lifeTicks.min, sparkConfig.lifeTicks.max);
         sparks.push(spark);
       }
-    } else { // Поведение по умолчанию, если тип не определен
-      this.speed *= 0.97;
-      this.x -= this.vx * this.speed * this.ms + this.wind;
-      this.y -= this.vy * this.speed * this.ms - this.gravity;
     }
     this.s++;
   };
@@ -267,7 +263,6 @@ function ExplosionParticle() {
     else if (this.type == 2) { fwCtx.translate(this.x, this.y); fwCtx.scale(this.scale, this.scale); fwCtx.beginPath(); fwCtx.fillRect(-this.size/2, -this.size/2, this.size, this.size); }
     else if (this.type == 3) { fwCtx.beginPath(); fwCtx.moveTo(this.x, this.y); fwCtx.lineTo(this.x - this.vx * 12, this.y - this.vy * 12); fwCtx.lineWidth = this.lineWidth; fwCtx.stroke(); }
     else if (this.type == 4) { fwCtx.beginPath(); fwCtx.arc(this.x, this.y, this.size, 0, 2 * Math.PI); fwCtx.fill(); }
-    else { fwCtx.beginPath(); fwCtx.arc(this.x, this.y, this.size - 0.5, 0, 2 * Math.PI); fwCtx.fill(); } // Немного меньше для неопределенного типа
     fwCtx.restore();
   };
 }
