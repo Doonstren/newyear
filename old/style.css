@@ -2,7 +2,7 @@
     --text-color: white;
     --shadow-color: black;
     --shadow-blur: 5px;
-    --font-size: 4.2vmin;
+    --font-size: clamp(1.2rem, calc(1.4vw + 1.4vh), 3.5rem); 
     --snowflake-size: 15px;
 }
 
@@ -40,7 +40,7 @@ body {
 }
 
 .stroke {
-    font-size: var(--font-size);
+    font-size: var(--font-size); 
     color: var(--text-color);
     text-shadow:
         var(--shadow-color) 0 0 var(--shadow-blur),
@@ -51,7 +51,6 @@ body {
 h1#countdown {
     line-height: 1.4;
 }
-
 
 #snowflakes-container {
     position: fixed;
@@ -69,21 +68,18 @@ h1#countdown {
     opacity: 0.8;
 }
 
-
 @media (max-width: 768px) {
     :root {
-        --font-size: 6vmin;
+        --font-size: clamp(1.5rem, calc(2vw + 2vh), 4rem); 
     }
 }
 
 @media (max-width: 600px) {
     :root {
-        --font-size: 1.8em;
+        --font-size: 1.8em; 
         --snowflake-size: 10px;
     }
-    .stroke {
-        font-size: 1.8em;
-    }
+    
 }
 
 #toggle-hover-area {
