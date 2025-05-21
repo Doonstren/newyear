@@ -14,9 +14,12 @@
   <canvas id="fireworks-canvas"></canvas>
   <div class="decorations" id="decorations"></div>
 
-  <div id="debug-menu" class="debug-menu">
-    <button id="close-debug-menu" title="Закрыть">×</button>
-    <h3>Режим Отладки</h3>
+<!-- Меню Отладки -->
+<div id="debug-menu" class="debug-menu">
+  <button id="close-debug-menu" title="Закрыть">×</button>
+  <h3>Режим Отладки</h3>
+
+  <div class="debug-menu-buttons-container">
     <button data-month="0">❄️ Январь</button>
     <button data-month="1">🌨️ Февраль</button>
     <button data-month="2">🌱 Март</button>
@@ -30,8 +33,10 @@
     <button data-month="10">🌫️ Ноябрь</button>
     <button data-month="11">🎄 Декабрь</button>
     <button data-mode="new-year">🎆 Новый Год!</button>
-    <button id="reset-debug-mode">Сбросить<br>(Реальное время)</button>
   </div>
+
+  <button id="reset-debug-mode">Сбросить<br>(Реальное время)</button>
+</div>
 
   <div class="page-container">
     <header>
@@ -73,6 +78,7 @@
   </div>
 
   <script src="config.js" defer></script>
+  <script src="particleTypes.js" defer></script>
   <script src="seasonalEffects.js" defer></script>
   <script src="fireworks.js" defer></script>
   <script src="ui.js" defer></script>

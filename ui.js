@@ -1,7 +1,7 @@
 // DOM Elements (будут установлены в main.js)
 let currentDateEl, seasonIconEl, seasonNameEl, nextYearEl, countdownEl, daysEl, hoursEl, minutesEl, secondsEl,
-    daysLabelEl, hoursLabelEl, minutesLabelEl, secondsLabelEl, greetingEl, currentYearFooterEl,
-    decorationsContainer, bodyEl, h1El, centerContentEl, debugMenuEl, closeDebugMenuBtn, resetDebugModeBtn;
+    daysLabelEl, hoursLabelEl, minutesLabelEl, secondsLabelEl, greetingEl, currentYearFooterEl, decorationsContainer, 
+    bodyEl, h1El, centerContentEl, mainContentEl, debugMenuEl, closeDebugMenuBtn, resetDebugModeBtn;
 
 function initUIElements(elements) {
     currentDateEl = elements.currentDateEl;
@@ -23,6 +23,7 @@ function initUIElements(elements) {
     bodyEl = elements.bodyEl;
     h1El = elements.h1El;
     centerContentEl = elements.centerContentEl;
+    mainContentEl = elements.mainContentEl;
     debugMenuEl = elements.debugMenuEl;
     closeDebugMenuBtn = elements.closeDebugMenuBtn;
     resetDebugModeBtn = elements.resetDebugModeBtn;
@@ -119,10 +120,9 @@ function updateCountdownUI() {
         if (countdownEl.style.display !== 'none') {
             countdownEl.style.display = 'none';
             h1El.style.display = 'none';
-            centerContentEl.style.padding = '0';
             greetingEl.textContent = `С Новым ${calculatedNextYear} Годом! 🎉`;
             greetingEl.style.margin = '0';
-            centerContentEl.classList.add('greeting-active');
+            mainContentEl.classList.add('greeting-active');
             
             const isNewYearTime = (dateNow.getMonth() === 11 && dateNow.getDate() === 31) || (dateNow.getMonth() === 0 && dateNow.getDate() === 1);
             if (isNewYearTime && !isFireworksActive()) { // isFireworksActive from fireworks.js
@@ -138,7 +138,7 @@ function updateCountdownUI() {
             h1El.innerHTML = `До Нового <span id="next-year">${calculatedNextYear}</span> года осталось:`;
             document.getElementById('next-year').textContent = calculatedNextYear; // Убедимся что span обновлен
             greetingEl.textContent = '';
-            centerContentEl.classList.remove('greeting-active');
+            mainContentEl.classList.remove('greeting-active'); 
             stopFireworksSystem(); // from fireworks.js
         }
     }
@@ -168,8 +168,6 @@ function updateCountdownUI() {
         greetingText = 'Завтра Новый Год! 🎄';
     } else if (days <= 7) {
         greetingText = 'Меньше недели до Нового Года! 🎅';
-    } else if (days <= 31 && currentMonthIndex === 11) {
-        greetingText = 'Скоро Новый Год! ⛄';
     }
     greetingEl.textContent = greetingText;
 }
@@ -213,8 +211,10 @@ function setupDecorationsUI() {
 
 function toggleDebugMenuUI(show) {
     if (show) {
+        bodyEl.classList.add('debug-menu-open');
         debugMenuEl.classList.add('active');
     } else {
+        bodyEl.classList.remove('debug-menu-open');
         debugMenuEl.classList.remove('active');
     }
 }

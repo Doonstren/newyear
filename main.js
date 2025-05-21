@@ -1,40 +1,41 @@
-let overrideDate = null;
-let currentAppMonth; // Хранит текущий месяц приложения (с учетом отладки)
-let currentAppDay;   // Хранит текущий день приложения
-let currentAppYear;  // Хранит текущий год приложения
-let nextAppYear;     // Хранит следующий НГ (с учетом отладки)
+// --- Основной управляющий скрипт ---
 
-let cheatCodeBuffer = '';
-let isPageVisible = true;
-let pausedTime = 0;
-let animationFrameId = null;
-let mainLoopLastSecondUpdate = null;
-let mainLoopLastFrameTime = null;
+// Глобальные переменные состояния приложения
+let overrideDate = null;    // Для переопределения даты в режиме отладки
+let currentAppMonth;        // Текущий месяц, используемый приложением (с учетом отладки)
+let currentAppDay;          // Текущий день приложения
+let currentAppYear;         // Текущий год приложения
+let nextAppYear;            // Следующий Новый год, до которого идет отсчет
 
-// DOM Elements (будут переданы в ui.js)
+let cheatCodeBuffer = '';   // Буфер для ввода чит-кода (для меню отладки)
+let isPageVisible = true;   // Флаг: активна ли текущая вкладка браузера
+let pausedTime = 0;         // Для коррекции времени анимации после паузы
+let animationFrameId = null;// ID для requestAnimationFrame (основной цикл анимации)
+let mainLoopLastSecondUpdate = null; // Для ограничения некоторых обновлений до одного раза в секунду
+let mainLoopLastFrameTime = null;    // Для расчета delta time в цикле анимации
+
+// Объект для хранения ссылок на DOM-элементы
 const domElements = {};
 
-
-// --- Функции, которые нужны другим модулям ---
+// --- Функции, используемые другими модулями ---
+// Возвращает текущую дату (реальную или отладочную)
 function getCurrentDateInternal() {
     return overrideDate || new Date();
 }
 
+// Возвращает состояние видимости текущей вкладки браузера
 function isPageCurrentlyVisible() {
     return isPageVisible;
 }
 
-function isFireworksActive() { // Обёртка для fireworks.js
-    return fireworksSystemActive;
-}
-
-function setGlobalNextYear(year) { // Вызывается из ui.js
+// Устанавливает год следующего Нового Года (вызывается из ui.js)
+function setGlobalNextYear(year) {
     nextAppYear = year;
 }
 
-// --- Инициализация и основной цикл ---
+// --- Инициализация приложения и основной цикл ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Получение DOM элементов
+    // Инициализация ссылок на DOM-элементы
     domElements.currentDateEl = document.getElementById('current-date');
     domElements.seasonIconEl = document.getElementById('season-icon');
     domElements.seasonNameEl = document.getElementById('season-name');
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     domElements.bodyEl = document.body;
     domElements.h1El = document.querySelector('h1');
     domElements.centerContentEl = document.getElementById('center-content');
+    domElements.mainContentEl = document.querySelector('.main-content');
     domElements.debugMenuEl = document.getElementById('debug-menu');
     domElements.closeDebugMenuBtn = document.getElementById('close-debug-menu');
     domElements.resetDebugModeBtn = document.getElementById('reset-debug-mode');
@@ -61,19 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализация модулей
     initUIElements(domElements);
     initSeasonalEffects(document.getElementById('seasonal-canvas'), document.getElementById('seasonal-canvas').getContext('2d'));
-    initFireworks(document.getElementById('fireworks-canvas'), document.getElementById('fireworks-canvas').getContext('2d'));
-    
-    // Обновление глобальных переменных даты/года приложения
+    FireworksManager.init(
+        document.getElementById('fireworks-canvas'),
+        document.getElementById('fireworks-canvas').getContext('2d'),
+        isPageCurrentlyVisible
+    );
+
     const initialDate = getCurrentDateInternal();
     currentAppMonth = initialDate.getMonth();
     currentAppDay = initialDate.getDate();
     currentAppYear = initialDate.getFullYear();
-    nextAppYear = (currentAppMonth === 0 && currentAppDay === 1 && initialDate.getHours() < 6)
-        ? currentAppYear
-        : currentAppYear + 1;
-    domElements.nextYearEl.textContent = nextAppYear;
     domElements.currentYearFooterEl.textContent = currentAppYear;
-
 
     initializeApp();
 
@@ -97,26 +97,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentActualYear = new Date().getFullYear();
                 overrideDate = new Date(currentActualYear, targetMonth, 15, 12, 0, 0);
                 forceFullUpdate();
-                if (fireworksSystemActive && targetMonth !== 11 && targetMonth !== 0) {
-                    stopFireworksSystem();
-                }
+                // Фейерверки останавливаются/запускаются в forceFullUpdate
             } else if (mode === 'new-year') {
                 const currentActualYear = new Date().getFullYear();
                 overrideDate = new Date(currentActualYear + 1, 0, 1, 0, 1, 0);
                 forceFullUpdate();
-                startFireworksSystem();
             }
         }
     });
 });
 
-
+// Инициализирует компоненты и запускает главный цикл
 function initializeApp() {
     console.log("Initializing App...");
     updateDateTimeUI();
     updateMonthSeasonUI();
     updateCountdownUI();
-    resizeAllCanvases(); // Это вызовет createSeasonalParticles и настроит размеры fw-канваса
+    resizeAllCanvases();
     setupDecorationsUI();
 
     if (animationFrameId) {
@@ -124,77 +121,90 @@ function initializeApp() {
     }
     requestAnimationFrame(mainLoop);
 
+    // Периодическая проверка смены месяца
     setInterval(() => {
         const checkDate = getCurrentDateInternal();
-        if (checkDate.getMonth() !== currentAppMonth) { // Сравниваем с currentAppMonth, а не глобальной currentMonth
-            console.log("Ежечасная проверка: Месяц изменился, обновляем UI.");
-            currentAppMonth = checkDate.getMonth(); // Обновляем currentAppMonth
+        if (checkDate.getMonth() !== currentAppMonth) {
+            console.log("Hourly check: Month changed, updating UI.");
+            currentAppMonth = checkDate.getMonth();
             updateMonthSeasonUI();
             setupDecorationsUI();
             resizeAllCanvases();
         }
-    }, 3600000);
+    }, 3600000); // 1 час
 }
 
+// Главный цикл анимации и обновлений
 function mainLoop(timestamp) {
     const now = getCurrentDateInternal();
 
+    // Обновления, выполняемые примерно раз в секунду
     if (!mainLoopLastSecondUpdate || timestamp - mainLoopLastSecondUpdate >= 1000) {
         updateDateTimeUI();
-        updateCountdownUI();
+        updateCountdownUI(); // Может запустить фейерверки при наступлении НГ
 
-        if (now.getDate() !== currentAppDay || now.getMonth() !== currentAppMonth) {
-            currentAppDay = now.getDate(); // Обновляем currentAppDay
-            currentAppMonth = now.getMonth(); // Обновляем currentAppMonth
+        const newAppDay = now.getDate();
+        const newAppMonth = now.getMonth();
+        if (newAppDay !== currentAppDay || newAppMonth !== currentAppMonth) {
+            currentAppDay = newAppDay;
+            const monthChanged = newAppMonth !== currentAppMonth;
+            currentAppMonth = newAppMonth;
+
             updateMonthSeasonUI();
             setupDecorationsUI();
-            if (now.getMonth() !== currentAppMonth) { // Если именно месяц сменился
-                 resizeAllCanvases(); // Это включает createSeasonalParticles
+            if (monthChanged) {
+                 resizeAllCanvases(); // Пересоздание частиц при смене месяца
             }
         }
         mainLoopLastSecondUpdate = timestamp;
     }
 
-    updateAndDrawSeasonalParticles();
-
+    updateAndDrawSeasonalParticles(); // Обновление сезонных частиц
     const frameTime = timestamp - (mainLoopLastFrameTime || timestamp);
-    updateFireworksFrame(Math.min(frameTime, fwFrameDelay * 2));
+    FireworksManager.updateFrame(Math.min(frameTime, fwFrameDelay * 2)); // Обновление фейерверков
     mainLoopLastFrameTime = timestamp;
 
     animationFrameId = requestAnimationFrame(mainLoop);
 }
 
+// Изменение размера для всех канвасов
 function resizeAllCanvases() {
-    resizeSeasonalCanvas(); // из seasonalEffects.js
-    resizeFireworksCanvas(); // из fireworks.js
+    resizeSeasonalCanvas(); // Из seasonalEffects.js
+    FireworksManager.resize(); // Из fireworks.js
 }
 
+// Проверяет, должны ли фейерверки быть активны для указанной даты
+function shouldFireworksBeActiveForDate(date) {
+    const isNewYearPeriod = (date.getMonth() === 11 && date.getDate() === 31) ||
+                            (date.getMonth() === 0 && date.getDate() === 1);
+    if (!isNewYearPeriod) return false;
+
+    let yearForNewYearMoment = date.getFullYear();
+    if (date.getMonth() === 11) { yearForNewYearMoment++; }
+    const newYearMoment = new Date(yearForNewYearMoment, 0, 1, 0, 0, 0);
+    return date >= newYearMoment;
+}
+
+// Принудительное полное обновление UI и эффектов
 function forceFullUpdate() {
     const date = getCurrentDateInternal();
-    currentAppMonth = date.getMonth(); // Обновляем состояние перед полным обновлением
+    currentAppMonth = date.getMonth();
     currentAppDay = date.getDate();
     currentAppYear = date.getFullYear();
-     nextAppYear = (currentAppMonth === 0 && currentAppDay === 1 && date.getHours() < 6)
-        ? currentAppYear
-        : currentAppYear + 1;
-
 
     updateDateTimeUI();
     updateMonthSeasonUI();
-    resizeAllCanvases(); 
+    resizeAllCanvases();
     updateCountdownUI();
     setupDecorationsUI();
-    stopFireworksSystem();
 
-    const isCurrentlyNewYearDebug = (date.getMonth() === 11 && date.getDate() === 31) || (date.getMonth() === 0 && date.getDate() === 1);
-    const newYearDateCheckDebug = new Date(date.getFullYear() + ( (date.getMonth()===0 && date.getDate()===1) ? 0 : 1), 0, 1, 0, 0, 0);
-    const diffCheckDebug = newYearDateCheckDebug - date;
-
-    if (isCurrentlyNewYearDebug && diffCheckDebug <= 0) {
-        startFireworksSystem();
+    FireworksManager.stop(); // Сначала останавливаем
+    if (shouldFireworksBeActiveForDate(date)) { // Затем запускаем, если нужно
+        FireworksManager.start();
     }
 }
 
+// Обработка ввода чит-кода для меню отладки
 function handleCheatCode(event) {
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
     if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -206,7 +216,7 @@ function handleCheatCode(event) {
             cheatCodeBuffer = cheatCodeBuffer.slice(-4);
         }
         if (cheatCodeBuffer === 'test') {
-            toggleDebugMenuUI(true);
+            toggleDebugMenuUI(true); // Функция из ui.js
             cheatCodeBuffer = '';
         }
     } else {
@@ -214,6 +224,7 @@ function handleCheatCode(event) {
     }
 }
 
+// Обработка изменения видимости вкладки браузера
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         isPageVisible = false;
@@ -222,23 +233,28 @@ document.addEventListener('visibilitychange', function() {
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
-        if (fireworkTriggerIntervalId) { // fireworkTriggerIntervalId из fireworks.js
-            clearInterval(fireworkTriggerIntervalId);
-            fireworkTriggerIntervalId = null; // Важно сбросить, чтобы fireworks.js не думал, что он еще активен
+        if (FireworksManager.isSystemActive()) {
+             FireworksManager.stop();
         }
     } else {
         isPageVisible = true;
-        if (mainLoopLastFrameTime) {
+        if (mainLoopLastFrameTime) { // Коррекция времени для анимации
             const pauseDuration = Date.now() - pausedTime;
             mainLoopLastFrameTime += pauseDuration;
             mainLoopLastSecondUpdate = mainLoopLastSecondUpdate ? mainLoopLastSecondUpdate + pauseDuration : null;
         }
-        if (!animationFrameId) {
+        if (!animationFrameId) { // Возобновление цикла анимации
             animationFrameId = requestAnimationFrame(mainLoop);
         }
-        if (fireworksSystemActive && !fireworkTriggerIntervalId) { // fireworksSystemActive, fireworkTriggerIntervalId из fireworks.js
-            fireworkTriggerIntervalId = setInterval(createNewFirework, FIREWORK_SETTINGS.TIMED_FIREWORK_INTERVAL); // createNewFirework из fireworks.js
+
+        // Проверка и возможный запуск фейерверков при возвращении на вкладку
+        const currentDate = getCurrentDateInternal();
+        if (shouldFireworksBeActiveForDate(currentDate)) {
+            if (!FireworksManager.isSystemActive()) {
+                FireworksManager.start();
+            }
         }
+        // Обновление UI, т.к. время могло "уйти"
         updateDateTimeUI();
         updateCountdownUI();
     }
