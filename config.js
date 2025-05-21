@@ -3,18 +3,18 @@
 // --- Настройки отображения даты и сезонов ---
 const MONTHS_CONFIG = [
     // Каждый объект описывает месяц: название, CSS-класс для фона, сезон, иконка и описание (пока не используется в UI)
-    { name: 'Январь', class: 'january', season: 'winter', icon: '❄️', description: 'Морозный январь' },
-    { name: 'Февраль', class: 'february', season: 'winter', icon: '🌨️', description: 'Снежный февраль' },
-    { name: 'Март', class: 'march', season: 'spring', icon: '🌱', description: 'Пробуждение весны' },
-    { name: 'Апрель', class: 'april', season: 'spring', icon: '🌷', description: 'Весенние дожди' },
-    { name: 'Май', class: 'may', season: 'spring', icon: '🌸', description: 'Цветущий май' },
-    { name: 'Июнь', class: 'june', season: 'summer', icon: '☀️', description: 'Начало лета' },
-    { name: 'Июль', class: 'july', season: 'summer', icon: '🏖️', description: 'Разгар лета' },
-    { name: 'Август', class: 'august', season: 'summer', icon: '🌞', description: 'Знойный август' },
-    { name: 'Сентябрь', class: 'september', season: 'autumn', icon: '🍁', description: 'Начало осени' },
-    { name: 'Октябрь', class: 'october', season: 'autumn', icon: '🍂', description: 'Золотая осень' },
-    { name: 'Ноябрь', class: 'november', season: 'autumn', icon: '🌫️', description: 'Поздняя осень' },
-    { name: 'Декабрь', class: 'december', season: 'winter', icon: '🎄', description: 'Предновогодний месяц' }
+    { name: 'Январь', class: 'january', season: 'winter', icon: '❄️' },
+    { name: 'Февраль', class: 'february', season: 'winter', icon: '🌨️' },
+    { name: 'Март', class: 'march', season: 'spring', icon: '🌱' },
+    { name: 'Апрель', class: 'april', season: 'spring', icon: '🌷' },
+    { name: 'Май', class: 'may', season: 'spring', icon: '🌸' },
+    { name: 'Июнь', class: 'june', season: 'summer', icon: '☀️' },
+    { name: 'Июль', class: 'july', season: 'summer', icon: '🏖️' },
+    { name: 'Август', class: 'august', season: 'summer', icon: '🌞' },
+    { name: 'Сентябрь', class: 'september', season: 'autumn', icon: '🍁' },
+    { name: 'Октябрь', class: 'october', season: 'autumn', icon: '🍂' },
+    { name: 'Ноябрь', class: 'november', season: 'autumn', icon: '🌫️' },
+    { name: 'Декабрь', class: 'december', season: 'winter', icon: '🎄' }
 ];
 
 const SEASONS_CONFIG = {

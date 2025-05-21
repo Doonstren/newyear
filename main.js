@@ -4,7 +4,6 @@ let overrideDate = null;    // Для отладки: переопределен
 let currentAppMonth;        // Актуальный месяц приложения
 let currentAppDay;          // Актуальный день приложения
 let currentAppYear;         // Актуальный год приложения
-let nextAppYear;            // Год следующего Нового Года
 
 let cheatCodeBuffer = '';   // Буфер для чит-кода
 let isPageVisible = true;   // Видимость вкладки
@@ -23,11 +22,6 @@ function getCurrentDateInternal() {
 // Возвращает состояние видимости вкладки
 function isPageCurrentlyVisible() {
     return isPageVisible;
-}
-
-// Устанавливает год следующего НГ (используется из ui.js)
-function setGlobalNextYear(year) {
-    nextAppYear = year;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -70,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     currentAppMonth = initialDate.getMonth();
     currentAppDay = initialDate.getDate();
     currentAppYear = initialDate.getFullYear();
-    domElements.currentYearFooterEl.textContent = currentAppYear;
 
     initializeApp();
 
