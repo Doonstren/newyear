@@ -3,86 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор режима</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
-
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(45deg, #1c1c2e, #2a2a4b);
-            font-family: 'Montserrat', sans-serif;
-            overflow: hidden;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .square-button {
-            width: 180px;
-            height: 180px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #ffffff;
-            font-size: 24px;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #8e2de2, #4a00e0);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease-in-out;
-            user-select: none;
-        }
-
-        .square-button:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            filter: brightness(1.1);
-        }
-
-        .square-button:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            transition-duration: 0.1s;
-        }
-
-        @media (max-width: 650px) {
-            .button-container {
-                flex-direction: column;
-                gap: 25px;
-            }
-            .square-button {
-                width: 160px;
-                height: 160px;
-                font-size: 20px;
-            }
-        }
-    </style>
+    <title>Новогодний Дашборд</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+    <h1>Выберите версию счётчика Нового Года:</h1>
     <div class="button-container">
         
-        <a href="../classic" class="square-button">
+        <a href="./newyear/classic/" class="square-button">
             Classic
         </a>
         
-        <a href="../season" class="square-button">
+        <a href="./newyear/season/" class="square-button">
             Season
         </a>
         
-        <a href="../nova" class="square-button">
+        <a href="./newyear/nova/" class="square-button">
             Nova
         </a>
         
