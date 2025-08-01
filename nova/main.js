@@ -1,12 +1,18 @@
 import { getHolidays } from './modules/holidayCalculator.js';
-import { loadScene, allEffects } from './modules/effectsEngine.js';
+import { loadScene, allEffects, effectsMap } from './modules/effectsEngine.js';
 import { setLanguage, getLocalization, pluralize } from './modules/localization.js';
 
 // --- App State ---
+const now = new Date();
 let appState = {
     isShortFormat: localStorage.getItem('isShortFormat') === 'true',
     ...getLocalization(),
-    holidays: getHolidays()
+    holidays: getHolidays(),
+    debug: {
+        month: now.getMonth(),
+        timeOfDay: (now.getHours() > 6 && now.getHours() < 20) ? 'day' : 'night',
+        effect: null
+    }
 };
 
 // --- DOM Elements ---
@@ -54,7 +60,7 @@ function updateCountdown(targetDate) {
 function setHoliday(holidayKey) {
     const { l, holidays, currentLang } = appState;
     const holiday = holidays[holidayKey];
-    if (!holiday) return; // Safety check
+    if (!holiday) return;
 
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -87,7 +93,6 @@ function populateHolidaySelector() {
 }
 
 function updateUIText() {
-    const { l } = appState;
     document.documentElement.lang = appState.currentLang;
     populateHolidaySelector();
     renderSettingsPopup();
@@ -118,8 +123,26 @@ function renderSettingsPopup() {
 }
 
 function renderDebugPopup() {
-    const { l, currentLang } = appState;
-    const monthOptions = [...Array(12).keys()].map(i => `<option value="${i}">${new Date(0, i).toLocaleString(currentLang, { month: 'long' })}</option>`).join('');
+    const { l, currentLang, debug } = appState;
+    const monthOptions = [...Array(12).keys()].map(i => {
+        const monthName = new Date(0, i).toLocaleString(currentLang, { month: 'long' });
+        return `<option value="${i}" ${i === debug.month ? 'selected' : ''}>${monthName.charAt(0).toUpperCase() + monthName.slice(1)}</option>`;
+    }).join('');
+
+    const effectForMonth = effectsMap[debug.month]?.effect || '';
+    const selectedEffect = debug.effect !== null ? debug.effect : effectForMonth;
+    
+    const effectNames = {
+        '': l.effect_none,
+        'particles_snow': l.effect_snow,
+        'autumn_rain': l.effect_autumn_rain
+    };
+
+    const effectOptions = allEffects.map(e => {
+        const localizedName = effectNames[e] || e;
+        return `<option value="${e}" ${e === selectedEffect ? 'selected' : ''}>${localizedName}</option>`;
+    }).join('');
+
     elements.debugPopup.innerHTML = `
         <h2>${l.debug_title}</h2>
         <div class="setting">
@@ -128,15 +151,27 @@ function renderDebugPopup() {
         </div>
         <div class="setting">
             <label for="tod-select">${l.time_of_day}</label>
-            <select id="tod-select"><option value="day">${l.day}</option><option value="night">${l.night}</option></select>
+            <select id="tod-select">
+                <option value="day">${l.day}</option>
+                <option value="night">${l.night}</option>
+            </select>
+        </div>
+        <div class="setting">
+            <label for="effect-select">${l.select_effect}</label>
+            <select id="effect-select"><option value="">${l.effect_none}</option>${effectOptions}</select>
         </div>
         <button id="reset-btn" class="full-width">${l.reset_button}</button>
         <button id="back-to-settings-btn" class="full-width secondary">${l.back_button}</button>
     `;
+    
+    // Set initial values after rendering
+    document.getElementById('tod-select').value = debug.timeOfDay;
+    document.getElementById('effect-select').value = selectedEffect;
 }
 
 function togglePopup(visible) {
     if (visible) {
+        renderDebugPopup();
         elements.settingsPopup.style.display = 'block';
         elements.debugPopup.style.display = 'none';
     }
@@ -171,13 +206,30 @@ function setupEventListeners() {
     });
 
     // Debug Popup
-    elements.debugPopup.addEventListener('change', () => {
-        const month = document.getElementById('month-select').value;
+    elements.debugPopup.addEventListener('change', (e) => {
+        const month = parseInt(document.getElementById('month-select').value, 10);
         const timeOfDay = document.getElementById('tod-select').value;
-        loadScene({ month: parseInt(month), timeOfDay: timeOfDay });
+        const effect = document.getElementById('effect-select').value;
+
+        appState.debug.month = month;
+        appState.debug.timeOfDay = timeOfDay;
+        appState.debug.effect = effect;
+
+        if (e.target.id !== 'effect-select') {
+            const effectForMonth = effectsMap[month]?.effect || '';
+            document.getElementById('effect-select').value = effectForMonth;
+            appState.debug.effect = effectForMonth;
+        }
+
+        loadScene({ month, timeOfDay, effect: appState.debug.effect });
     });
+
     elements.debugPopup.addEventListener('click', (e) => {
         if (e.target.id === 'reset-btn') {
+            const now = new Date();
+            appState.debug.month = now.getMonth();
+            appState.debug.timeOfDay = (now.getHours() > 6 && now.getHours() < 20) ? 'day' : 'night';
+            appState.debug.effect = null;
             loadScene();
             togglePopup(false);
         }

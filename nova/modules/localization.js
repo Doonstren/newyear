@@ -19,6 +19,9 @@ const strings = {
         day: "День",
         night: "Ночь",
         select_effect: "Эффект частиц",
+        effect_none: "Ничего",
+        effect_snow: "Снег",
+        effect_autumn_rain: "Осенний дождь",
         select_background: "Фон",
         reset_button: "Сбросить",
         back_button: "Назад к настройкам"
@@ -43,6 +46,9 @@ const strings = {
         day: "Day",
         night: "Night",
         select_effect: "Particle Effect",
+        effect_none: "None",
+        effect_snow: "Snow",
+        effect_autumn_rain: "Autumn Rain",
         select_background: "Background",
         reset_button: "Reset",
         back_button: "Back to Settings"

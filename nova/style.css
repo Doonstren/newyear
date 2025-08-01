@@ -42,14 +42,7 @@ body.bg-december-night { background: linear-gradient(to top, #0f2027, #2c5364); 
     display: none; /* No longer needed */
 }
 
-#tsparticles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
+
 
 .container {
     position: relative;
@@ -95,6 +88,8 @@ h1 {
     background-position: right 1rem center;
     background-size: 0.65rem;
     padding-right: 2.5rem;
+    text-align: center;
+    text-align-last: center;
 }
 
 #holiday-selector option {
@@ -206,3 +201,4 @@ h1 {
     background-color: transparent;
     border: 1px solid #555;
 }
+

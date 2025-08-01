@@ -1,4 +1,14 @@
 {
+    "detectRetina": true,
+    "fullScreen": {
+        "enable": true,
+        "zIndex": 0
+    },
+    "interactivity": {
+        "events": {
+            "resize": true
+        }
+    },
     "particles": {
         "number": {
             "value": 150,
