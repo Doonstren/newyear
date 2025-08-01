@@ -1,0 +1,34 @@
+{
+    "particles": {
+        "number": {
+            "value": 150,
+            "density": {
+                "enable": true,
+                "value_area": 800
+            }
+        },
+        "shape": {
+            "type": "image",
+            "image": {
+                "src": "../img/snowflake.png",
+                "width": 100,
+                "height": 100
+            }
+        },
+        "opacity": {
+            "value": {"min": 0.3, "max": 0.8}
+        },
+        "size": {
+            "value": {"min": 5, "max": 15}
+        },
+        "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "bottom",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false
+        }
+    }
+}

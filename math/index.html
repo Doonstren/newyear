@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Сезонный счётчик до Нового Года</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎄</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="texture-overlay"></div>
+  <canvas id="seasonal-canvas"></canvas>
+  <canvas id="fireworks-canvas"></canvas>
+  <div class="decorations" id="decorations"></div>
+
+<!-- Меню Отладки -->
+<div id="debug-menu" class="debug-menu">
+  <button id="close-debug-menu" title="Закрыть">×</button>
+  <h3>Режим Отладки</h3>
+
+  <div class="debug-menu-buttons-container">
+    <button data-month="0">❄️ Январь</button>
+    <button data-month="1">🌨️ Февраль</button>
+    <button data-month="2">🌱 Март</button>
+    <button data-month="3">🌷 Апрель</button>
+    <button data-month="4">🌸 Май</button>
+    <button data-month="5">☀️ Июнь</button>
+    <button data-month="6">🏖️ Июль</button>
+    <button data-month="7">🌞 Август</button>
+    <button data-month="8">🍁 Сентябрь</button>
+    <button data-month="9">🍂 Октябрь</button>
+    <button data-month="10">🌫️ Ноябрь</button>
+    <button data-month="11">🎄 Декабрь</button>
+    <button data-mode="new-year">🎆 Новый Год!</button>
+  </div>
+
+  <button id="reset-debug-mode">Сбросить<br>(Реальное время)</button>
+</div>
+
+  <div class="page-container">
+    <header>
+      <div class="current-date" id="current-date">Загрузка даты...</div>
+      <div class="season-info">
+        <div class="season-icon" id="season-icon">❄️</div>
+        <div id="season-name">Зима</div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="center-content" id="center-content">
+        <h1>До Нового <span id="next-year"></span> года осталось:</h1>
+        <div class="countdown" id="countdown">
+          <span>
+            <div class="number" id="days">0</div>
+            <div class="label" id="days-label">дней</div>
+          </span>
+          <span>
+            <div class="number" id="hours">00</div>
+            <div class="label" id="hours-label">часов</div>
+          </span>
+          <span>
+            <div class="number" id="minutes">00</div>
+            <div class="label" id="minutes-label">минут</div>
+          </span>
+          <span>
+            <div class="number" id="seconds">00</div>
+            <div class="label" id="seconds-label">секунд</div>
+          </span>
+        </div>
+        <div class="greeting" id="greeting"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div>© <span id="current-year"></span> Сезонный счётчик до Нового Года</div>
+    </footer>
+  </div>
+
+  <script src="config.js" defer></script>
+  <script src="particleTypes.js" defer></script>
+  <script src="seasonalEffects.js" defer></script>
+  <script src="fireworks.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>

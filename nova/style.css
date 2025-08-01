@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #121212; /* Fallback */
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    transition: background 1.5s ease;
+}
+
+/* Monthly Backgrounds - High Contrast */
+body.bg-january-day { background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%); }
+body.bg-january-night { background: linear-gradient(to top, #0f2027, #203a43, #2c5364); }
+body.bg-february-day { background: linear-gradient(120deg, #6b778d 0%, #a7a6cb 100%); }
+body.bg-february-night { background: linear-gradient(to top, #232526, #414345); }
+body.bg-march-day { background: linear-gradient(120deg, #00b09b 0%, #96c93d 100%); }
+body.bg-march-night { background: linear-gradient(to top, #16222a, #3a6073); }
+body.bg-april-day { background: linear-gradient(120deg, #28b485 0%, #8de2b8 100%); }
+body.bg-april-night { background: linear-gradient(to top, #2c3e50, #4ca1af); }
+body.bg-may-day { background: linear-gradient(120deg, #ff758c 0%, #ff7eb3 100%); }
+body.bg-may-night { background: linear-gradient(to top, #304352, #d7d2cc); }
+body.bg-june-day { background: linear-gradient(120deg, #ff8c00 0%, #ffaf60 100%); }
+body.bg-june-night { background: linear-gradient(to top, #1c3d52, #2a5298); }
+body.bg-july-day { background: linear-gradient(120deg, #ff4e50 0%, #f9d423 100%); }
+body.bg-july-night { background: linear-gradient(to top, #3a6186, #89253e); }
+body.bg-august-day { background: linear-gradient(120deg, #ff512f 0%, #dd2476 100%); }
+body.bg-august-night { background: linear-gradient(to top, #2c3e50, #fd746c); }
+body.bg-september-day { background: linear-gradient(120deg, #c33764 0%, #1d2671 100%); }
+body.bg-september-night { background: linear-gradient(to top, #434343, #000000); }
+body.bg-october-day { background: linear-gradient(120deg, #cb2d3e 0%, #ef473a 100%); }
+body.bg-october-night { background: linear-gradient(to top, #232526, #414345); }
+body.bg-november-day { background: linear-gradient(120deg, #757f9a 0%, #d7dde8 100%); }
+body.bg-november-night { background: linear-gradient(to top, #485563, #29323c); }
+body.bg-december-day { background: linear-gradient(120deg, #00c6ff 0%, #0072ff 100%); }
+body.bg-december-night { background: linear-gradient(to top, #0f2027, #2c5364); }
+
+#background-layer {
+    display: none; /* No longer needed */
+}
+
+#tsparticles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+
+h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+#countdown {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.holiday-selector-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#holiday-selector {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    border-radius: 5px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem;
+}
+
+#holiday-selector option {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+#holiday-date {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Settings Icon */
+.settings-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+.settings-icon:hover {
+    transform: rotate(45deg);
+}
+
+/* Popup */
+.popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-wrapper.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup {
+    background-color: #2c2c2c;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.popup h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.popup .setting {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup label {
+    font-size: 1rem;
+}
+
+.popup select, .popup button {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem;
+}
+
+.popup select option {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.popup button.full-width {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.popup button.secondary {
+    background-color: transparent;
+    border: 1px solid #555;
+}

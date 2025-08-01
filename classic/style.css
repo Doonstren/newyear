@@ -1,0 +1,106 @@
+:root {
+    --text-color: white;
+    --shadow-color: black;
+    --shadow-blur: 5px;
+    --font-size: clamp(1.2rem, calc(1.4vw + 1.4vh), 3.5rem); 
+    --snowflake-size: 15px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: url(background.jpg) no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+}
+
+#modern-version-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.content {
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+
+.stroke {
+    font-size: var(--font-size); 
+    color: var(--text-color);
+    text-shadow:
+        var(--shadow-color) 0 0 var(--shadow-blur),
+        var(--shadow-color) 0 0 var(--shadow-blur),
+        var(--shadow-color) 0 0 var(--shadow-blur);
+}
+
+h1#countdown {
+    line-height: 1.4;
+}
+
+#snowflakes-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.snowflake {
+    position: absolute;
+    width: var(--snowflake-size);
+    height: var(--snowflake-size);
+    background: url('snow.png') no-repeat center/contain;
+    will-change: transform;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --font-size: clamp(1.5rem, calc(2vw + 2vh), 4rem); 
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --font-size: 1.8em; 
+        --snowflake-size: 10px;
+    }
+    
+}
+
+#toggle-hover-area {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    z-index: 999;
+}
+
+#style-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+    user-select: none;
+}
